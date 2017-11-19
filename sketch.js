@@ -2,7 +2,7 @@ var capture,
 		mic,
 		vol,
 		icon,
-		amount=100,
+		amount=75,
 		s = 0,
 		mode = true,
 		MicON = false,
@@ -87,7 +87,7 @@ function draw() {
 		textSize(15)
 
 		text("Work best on Chrome",width/2,height/10)
-		text("Press i for toggle info",width/2,height/10+18)
+		text("Press i to toggle info",width/2,height/10+18)
 
 		fill(255,0,0,alph2)
 
