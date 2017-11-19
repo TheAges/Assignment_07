@@ -1,11 +1,15 @@
 var capture,
 		mic,
 		vol,
+		icon,
 		amount=100,
 		s = 0,
 		mode = true,
 		MicON = false,
-		alph = 255,
+		invertMODE = false;
+		infoMODE = false;
+		alph1 = 255,
+		alph2 = 0,
 		testoAll = [
 			[0,1],
 			[0,1,2,3,4,5,6,7,8,9,"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","w","v","x","y","z","ò","ç","à","è","é",".",",","!","£","$","%","&","/","€","@","#","°","/","*","-","+"],
@@ -20,11 +24,13 @@ function setup() {
 	noStroke()
 
 	capture = createCapture(VIDEO);
-	capture.size(640, 480);
+	capture.size(500, 500);
 	capture.hide();
 
 	mic = new p5.AudioIn();
 	mic.start();
+
+	icon = loadImage("assets/mic_icon.png");
 }
 
 function draw() {
@@ -34,6 +40,8 @@ function draw() {
 
 	if (amount<25) {amount=25}
 	if (amount>100) {amount=100}
+
+	if (mode==true) {fill("white");rect(0,0,width,height)}
 
 	if (MicON==true) {
 		vol = mic.getLevel();
@@ -49,9 +57,7 @@ function draw() {
 
 	var myImage = capture.loadPixels();
 	//filter(THRESHOLD);
-	filter(INVERT);
-
-	if (mode==true) {fill("black");rect(0,0,width,height)}
+	//filter(INVERT)
 
   for(var a=1; a<amount; a++) {
 
@@ -65,31 +71,34 @@ function draw() {
     	text(random(testo),a*WPixel,b*WPixel)
 
     }
+	}
 
-}
 	//image(myImage, 0, 0, 640, 480);
 	filter(THRESHOLD);
-	filter(INVERT)
+	if (invertMODE == true) {filter(INVERT)};
 
-	if ((millis()/1000)>15) {alph-=20}
+	if (infoMODE == true ) {alph1=255;alph2=255}
+	else {if ((millis()/1000)>15) {alph1-=35;alph2-=35}}
+
 
 	push()
-		fill(255,0,0,alph)
+		fill(255,0,0,alph1)
 		textAlign(CENTER)
 		textSize(15)
+
 		text("Work best on Chrome",width/2,height/10)
+		text("Press i for toggle info",width/2,height/10+18)
+
+		fill(255,0,0,alph2)
+
 		text("Press any key to toggle continuous mode",width/2,8*height/10)
 		text("Press the mouse button to cycle digits sets",width/2,8*height/10+18)
 		text("Scroll up or down to increase or decrease resolution",width/2,8*height/10+36)
 		text("Press the center mouse button to enable mic mode",width/2,8*height/10+54)
+		text("Press enter to toggle invert mode",width/2,8*height/10+70)
 	pop()
 
-	if (mouseIsPressed) {
-    if (mouseButton == LEFT) {s++}
-    //if (mouseButton == RIGHT) {s--}
-		if (mouseButton == CENTER) {MicON=!MicON}
-	}
-
+	if (MicON==true) {	image(icon, 0, 10, icon.width/5, icon.height/5);}
 
 }
 
@@ -98,6 +107,16 @@ function mouseWheel(event) {
 	else {amount+=25}
 }
 
-function keyReleased() {
-	mode = !mode
+function keyReleased(EVENT) {
+	//print(EVENT)
+	//print(keyCode)
+	if (keyCode == ENTER) {invertMODE=!invertMODE}
+	else if (keyCode == 73) {infoMODE=!infoMODE}
+	else {mode = !mode}
+}
+
+function mouseReleased() {
+	if (mouseButton == LEFT) {s++}
+	//if (mouseButton == RIGHT) {s--}
+	if (mouseButton == CENTER) {MicON=!MicON}
 }
